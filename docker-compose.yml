@@ -1,0 +1,49 @@
+version: '3'
+services:
+  control-node:
+    build:
+      context: .
+    container_name: ansible-control-node
+    networks:
+      ansible-net:
+        ipv4_address: 192.168.0.2
+    volumes:
+      - .:/app
+      - ./id_rsa:/root/.ssh/id_rsa
+      - ./id_rsa.pub:/root/.ssh/id_rsa.pub
+  child-node-1:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: ansible-child-node-1
+    networks:
+      ansible-net:
+        ipv4_address: 192.168.0.3
+    volumes:
+      - ./id_rsa.pub:/home/alpine/.ssh/authorized_keys
+  child-node-2:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: ansible-child-node-2
+    networks:
+      ansible-net:
+        ipv4_address: 192.168.0.4
+    volumes:
+      - ./id_rsa.pub:/home/alpine/.ssh/authorized_keys
+  child-node-3:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: ansible-child-node-3
+    networks:
+      ansible-net:
+        ipv4_address: 192.168.0.5
+    volumes:
+      - ./id_rsa.pub:/home/alpine/.ssh/authorized_keys
+networks:
+  ansible-net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24

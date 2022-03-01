@@ -1,0 +1,20 @@
+FROM alpine:latest
+
+LABEL maintainer="운감 leej74225@github.com"
+
+RUN apk --update add --no-cache openrc openssh openssh-server-pam python3
+RUN rm -rf /var/cache/apk/*
+
+RUN mkdir -p /run/openrc && \
+    touch /run/openrc/softlevel \
+    rc-update add sshd default
+
+RUN sed -ie 's/#UsePAM.*/UsePAM\ yes/g' /etc/ssh/sshd_config
+
+RUN adduser -s /bin/ash -D alpine
+
+EXPOSE 22
+
+VOLUME [ "/sys/fs/cgroup" ]
+
+CMD ["tail", "-F", "/dev/null"]
